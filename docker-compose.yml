@@ -1,0 +1,18 @@
+services:
+  userdb:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "Walid@1235"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - userdb-data:/var/opt/mssql
+    networks:
+      - appnet
+
+networks:
+  appnet:
+
+volumes:
+  userdb-data:
