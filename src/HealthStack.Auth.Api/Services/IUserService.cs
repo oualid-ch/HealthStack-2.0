@@ -9,7 +9,6 @@ namespace HealthStack.Auth.Api.Services
         public Task<(User? user, string? token)> LoginUserAsync(string email, string password);
         public Task<(User user, string token)> RegisterUserAsync(User user);
         public Task<bool> EmailExistsAsync(string email);
-        public Task<User?> ValidateTokenAsync(string token);
 
         // TODO: Add templates for delete user, update user, update password, select all for admin???, admin routes?
     }

@@ -93,12 +93,5 @@ namespace HealthStack.Auth.Api.Controllers
 
             return Ok(_mapper.Map<UserReadDto>(user));
         }
-
-        [HttpGet("debug-token")]
-        [Authorize]
-        public IActionResult DebugToken()
-        {
-            return Ok(User.Claims.Select(c => new { c.Type, c.Value }));
-        }
     }
 }

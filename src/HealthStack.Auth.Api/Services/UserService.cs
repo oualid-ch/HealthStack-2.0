@@ -26,9 +26,10 @@ public class UserService(AppDbContext context, TokenProvider tokenProvider) : IU
             if(user == null) return (null, null);
 
             bool isValid = BCrypt.Net.BCrypt.Verify(password, user.Password);
-            string token = _tokenProvider.GenerateToken(user);
+            if(!isValid)
+                return (null, null);
 
-            return isValid ? (user, token) : (null, null);
+            return (user, _tokenProvider.GenerateToken(user));
         }
 
         public async Task<(User user, string token)> RegisterUserAsync(User user)
@@ -41,29 +42,10 @@ public class UserService(AppDbContext context, TokenProvider tokenProvider) : IU
             
             return (user, token);
         }
-
-        public async Task<User?> ValidateTokenAsync(string token)
-        {
-            if (string.IsNullOrWhiteSpace(token))
-                return null;
-
-            const string prefix = "fake-token-";
-            if (!token.StartsWith(prefix))
-                return null;
-
-            var span = token.AsSpan(prefix.Length);
-            if (!int.TryParse(span, out int userId))
-                return null;
-
-            return await _context.Users
-                .Include(u => u.Addresses)
-                .FirstOrDefaultAsync(u => u.Id == userId);
-        }
     
         public async Task<bool> EmailExistsAsync(string email)
         {
             return await _context.Users.AnyAsync(u => u.Email == email);
         }
-
     }
 }
