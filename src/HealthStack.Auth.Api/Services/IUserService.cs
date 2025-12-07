@@ -6,8 +6,8 @@ namespace HealthStack.Auth.Api.Services
     public interface IUserService
     {
         public Task<User?> GetUserByIdAsync(int id);
-        public Task<User?> LoginUserAsync(string email, string password);
-        public Task<User> RegisterUserAsync(User user);
+        public Task<(User? user, string? token)> LoginUserAsync(string email, string password);
+        public Task<(User user, string token)> RegisterUserAsync(User user);
         public Task<bool> EmailExistsAsync(string email);
         public Task<User?> ValidateTokenAsync(string token);
 
