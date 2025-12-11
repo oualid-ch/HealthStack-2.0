@@ -2,6 +2,7 @@ using System.Security.Claims;
 using AutoMapper;
 using FluentValidation;
 using HealthStack.Auth.Api.DTOs;
+using HealthStack.Auth.Api.Exceptions;
 using HealthStack.Auth.Api.Models;
 using HealthStack.Auth.Api.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -26,7 +27,7 @@ namespace HealthStack.Auth.Api.Controllers
         public async Task<ActionResult<UserReadDto>> GetUserById(int id)
         {
             var user = await _userService.GetUserByIdAsync(id);
-            return user == null ? NotFound() : Ok(_mapper.Map<UserReadDto>(user));
+            return user == null ? throw new NotFoundException("User not found") : Ok(_mapper.Map<UserReadDto>(user));
         }
 
         // -------------------------------------------------------------
@@ -41,7 +42,7 @@ namespace HealthStack.Auth.Api.Controllers
 
             var (user, token) = await _userService.LoginUserAsync(userLoginDto.Email, userLoginDto.Password);
 
-            return user == null ? NotFound() : Ok(
+            return user == null ? throw new NotFoundException("User not found") : Ok(
                 new
                 {
                     Token = token,
@@ -59,10 +60,10 @@ namespace HealthStack.Auth.Api.Controllers
             var validation = _userRegisterValidator.Validate(userRegisterDto);
             if (!validation.IsValid)
                 return BadRequest(validation.ToDictionary());
-                
+            
             // Check duplicate email
             if (await _userService.EmailExistsAsync(userRegisterDto.Email))
-                return BadRequest(new { Email = new[] { "Email already registered" } });
+                throw new EmailAlreadyExistsException();
 
             User user = _mapper.Map<User>(userRegisterDto);
             user.Role = "User";
@@ -83,13 +84,11 @@ namespace HealthStack.Auth.Api.Controllers
         [Authorize]
         public async Task<IActionResult> GetCurrentUser()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
-                return Unauthorized();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) 
+                ?? throw new UnauthorizedException("Authentication required");
 
-            var user = await _userService.GetUserByIdAsync(int.Parse(userId));
-            if (user == null)
-                return Unauthorized();
+            var user = await _userService.GetUserByIdAsync(int.Parse(userId)) 
+                ?? throw new NotFoundException("User not found");
 
             return Ok(_mapper.Map<UserReadDto>(user));
         }

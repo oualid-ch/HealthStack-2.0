@@ -1,6 +1,7 @@
 using System.Text;
 using FluentValidation;
 using HealthStack.Auth.Api.Data;
+using HealthStack.Auth.Api.Exceptions;
 using HealthStack.Auth.Api.Models;
 using HealthStack.Auth.Api.Services;
 using HealthStack.Auth.Api.Utils;
@@ -56,6 +57,9 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -64,6 +68,10 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
     app.MapOpenApi();
 }
+
+app.UseExceptionHandler();
+app.UseHttpsRedirection();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
