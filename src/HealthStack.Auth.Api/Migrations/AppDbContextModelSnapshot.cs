@@ -24,11 +24,9 @@ namespace HealthStack.Auth.Api.Migrations
 
             modelBuilder.Entity("HealthStack.Auth.Api.Models.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -72,7 +70,7 @@ namespace HealthStack.Auth.Api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            Id = new Guid("3f2504e0-4f89-11d3-9a0c-0305e82c3301"),
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "john@example.com",
@@ -114,8 +112,8 @@ namespace HealthStack.Auth.Api.Migrations
                                 .HasMaxLength(100)
                                 .HasColumnType("nvarchar(100)");
 
-                            b1.Property<int>("UserId")
-                                .HasColumnType("int");
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("ZipCode")
                                 .IsRequired()
@@ -139,7 +137,7 @@ namespace HealthStack.Auth.Api.Migrations
                                     Country = "Germany",
                                     State = "North Rhine-Westphalia",
                                     Street = "Berliner Freiheit 20",
-                                    UserId = 1,
+                                    UserId = new Guid("3f2504e0-4f89-11d3-9a0c-0305e82c3301"),
                                     ZipCode = "53111"
                                 });
                         });

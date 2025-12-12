@@ -15,8 +15,7 @@ namespace HealthStack.Auth.Api.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -43,7 +42,7 @@ namespace HealthStack.Auth.Api.Migrations
                     State = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     ZipCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Country = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -59,12 +58,12 @@ namespace HealthStack.Auth.Api.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "CreatedAt", "DateOfBirth", "Email", "FirstName", "LastName", "Password", "PhoneNumber", "Role", "UpdatedAt" },
-                values: new object[] { 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "john@example.com", "John", "Doe", "$2a$11$I/.MeZXNc/fQmKhUk6epu.X9LUaTrANpOYysHu0kpOwcVpc9GFkqG", "+49 228 123456", "User", null });
+                values: new object[] { new Guid("3f2504e0-4f89-11d3-9a0c-0305e82c3301"), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "john@example.com", "John", "Doe", "$2a$11$I/.MeZXNc/fQmKhUk6epu.X9LUaTrANpOYysHu0kpOwcVpc9GFkqG", "+49 228 123456", "User", null });
 
             migrationBuilder.InsertData(
                 table: "Address",
                 columns: new[] { "Id", "City", "Country", "State", "Street", "UserId", "ZipCode" },
-                values: new object[] { 1, "Bonn", "Germany", "North Rhine-Westphalia", "Berliner Freiheit 20", 1, "53111" });
+                values: new object[] { 1, "Bonn", "Germany", "North Rhine-Westphalia", "Berliner Freiheit 20", new Guid("3f2504e0-4f89-11d3-9a0c-0305e82c3301"), "53111" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Address_UserId",

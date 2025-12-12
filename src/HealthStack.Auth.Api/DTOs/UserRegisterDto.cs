@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 namespace HealthStack.Auth.Api.DTOs
 {
     public class UserRegisterDto

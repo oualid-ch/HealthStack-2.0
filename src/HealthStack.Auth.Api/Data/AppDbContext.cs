@@ -21,7 +21,7 @@ namespace HealthStack.Auth.Api.Data
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
-                    Id = 1,
+                    Id = Guid.Parse("3f2504e0-4f89-11d3-9a0c-0305e82c3301"),
                     FirstName = "John",
                     LastName = "Doe",
                     Email = "john@example.com",
@@ -29,7 +29,7 @@ namespace HealthStack.Auth.Api.Data
                     Role = "User",
                     DateOfBirth = new DateTime(1990, 1, 1),
                     PhoneNumber = "+49 228 123456",
-                    CreatedAt = new DateTime(2024,01,01)
+                    CreatedAt = new DateTime(2024, 01, 01)
                 }
             );
 
@@ -37,7 +37,7 @@ namespace HealthStack.Auth.Api.Data
                 new
                 {
                     Id = 1,
-                    UserId = 1,
+                    UserId = Guid.Parse("3f2504e0-4f89-11d3-9a0c-0305e82c3301"),
                     Street = "Berliner Freiheit 20",
                     City = "Bonn",
                     State = "North Rhine-Westphalia",

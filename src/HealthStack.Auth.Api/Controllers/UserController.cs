@@ -2,7 +2,7 @@ using System.Security.Claims;
 using AutoMapper;
 using FluentValidation;
 using HealthStack.Auth.Api.DTOs;
-using HealthStack.Auth.Api.Exceptions;
+// using HealthStack.Auth.Api.Exceptions;
 using HealthStack.Auth.Api.Models;
 using HealthStack.Auth.Api.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +12,12 @@ namespace HealthStack.Auth.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController(IValidator<UserLoginDto> userLoginValidator, IValidator<UserRegisterDto> userRegisterValidator, IUserService userService, IMapper mapper) : ControllerBase
+    public class UserController(
+        IValidator<UserLoginDto> userLoginValidator, 
+        IValidator<UserRegisterDto> userRegisterValidator, 
+        IUserService userService, 
+        IMapper mapper
+        ) : ControllerBase
     {
         private readonly IValidator<UserLoginDto> _userLoginValidator = userLoginValidator;
         private readonly IValidator<UserRegisterDto> _userRegisterValidator = userRegisterValidator;
@@ -22,12 +27,13 @@ namespace HealthStack.Auth.Api.Controllers
 
         // -------------------------------------------------------------
         // GET USER BY ID
+        // Debug temporary endpoint!!
         // -------------------------------------------------------------
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<UserReadDto>> GetUserById(int id)
+        [HttpGet("{id:guid}")]
+        public async Task<ActionResult<UserReadDto>> GetUserById(Guid id)
         {
             var user = await _userService.GetUserByIdAsync(id);
-            return user == null ? throw new NotFoundException("User not found") : Ok(_mapper.Map<UserReadDto>(user));
+            return Ok(_mapper.Map<UserReadDto>(user));
         }
 
         // -------------------------------------------------------------
@@ -42,7 +48,7 @@ namespace HealthStack.Auth.Api.Controllers
 
             var (user, token) = await _userService.LoginUserAsync(userLoginDto.Email, userLoginDto.Password);
 
-            return user == null ? throw new NotFoundException("User not found") : Ok(
+            return Ok(
                 new
                 {
                     Token = token,
@@ -61,16 +67,12 @@ namespace HealthStack.Auth.Api.Controllers
             if (!validation.IsValid)
                 return BadRequest(validation.ToDictionary());
             
-            // Check duplicate email
-            if (await _userService.EmailExistsAsync(userRegisterDto.Email))
-                throw new EmailAlreadyExistsException();
-
             User user = _mapper.Map<User>(userRegisterDto);
             user.Role = "User";
 
             var (created, token) = await _userService.RegisterUserAsync(user);
 
-            return CreatedAtAction(nameof(GetUserById), new { id = created.Id }, new
+            return CreatedAtAction(nameof(GetCurrentUser), null, new
             {
                 Token = token,
                 User = _mapper.Map<UserReadDto>(created)
@@ -84,12 +86,11 @@ namespace HealthStack.Auth.Api.Controllers
         [Authorize]
         public async Task<IActionResult> GetCurrentUser()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) 
-                ?? throw new UnauthorizedException("Authentication required");
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if(userIdClaim == null)
+                return Unauthorized(new {message = "Authentication required"});
 
-            var user = await _userService.GetUserByIdAsync(int.Parse(userId)) 
-                ?? throw new NotFoundException("User not found");
-
+            var user = await _userService.GetUserByIdAsync(Guid.Parse(userIdClaim));
             return Ok(_mapper.Map<UserReadDto>(user));
         }
     }
