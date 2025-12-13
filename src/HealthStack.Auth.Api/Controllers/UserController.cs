@@ -2,7 +2,6 @@ using System.Security.Claims;
 using AutoMapper;
 using FluentValidation;
 using HealthStack.Auth.Api.DTOs;
-// using HealthStack.Auth.Api.Exceptions;
 using HealthStack.Auth.Api.Models;
 using HealthStack.Auth.Api.Services;
 using Microsoft.AspNetCore.Authorization;

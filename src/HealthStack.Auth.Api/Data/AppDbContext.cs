@@ -6,7 +6,6 @@ namespace HealthStack.Auth.Api.Data
     public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
     {
         public DbSet<User> Users => Set<User>();
-        // public DbSet<Address> Addresses => Set<Address>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -6,10 +6,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HealthStack.Auth.Api.Services
 {
-public class UserService(AppDbContext context, TokenProvider tokenProvider, ILogger<UserService> logger) : IUserService
+public class UserService(
+    AppDbContext context, 
+    ITokenProvider tokenProvider, 
+    ILogger<UserService> logger
+    ) : IUserService
     {
         private readonly AppDbContext _context = context;
-        private readonly TokenProvider _tokenProvider = tokenProvider;
+        private readonly ITokenProvider _tokenProvider = tokenProvider;
         private readonly ILogger<UserService> _logger = logger;
 
         public async Task<User> GetUserByIdAsync(Guid id)
@@ -18,7 +22,7 @@ public class UserService(AppDbContext context, TokenProvider tokenProvider, ILog
                 .Include(u => u.Addresses)
                 .SingleOrDefaultAsync(u => u.Id == id);
             
-            return user ?? throw new UserNotFoundException("User not found");
+            return user ?? throw new UserIdNotFoundException(id);
         }
 
         public async Task<(User user, string token)> LoginUserAsync(string email, string password)

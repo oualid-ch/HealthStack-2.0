@@ -24,6 +24,13 @@ namespace HealthStack.Auth.Api.Exceptions
                     detail = "The credentials provided are invalid.";
                     _logger.LogWarning(ex, "User not found. Email: {Email}", LogUtils.MaskEmail(ex.Email));
                     break;
+                
+                case UserIdNotFoundException ex:
+                    statusCode = StatusCodes.Status404NotFound;
+                    title = "User not found";
+                    detail = "No user exists with the specified ID.";
+                    _logger.LogWarning(ex, "User not found. userId: {UserId}", LogUtils.MaskGuid(ex.UserId));
+                    break;
 
                 case InvalidPasswordException ex:
                     statusCode = StatusCodes.Status401Unauthorized;

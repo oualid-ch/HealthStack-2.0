@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11222.15 d18.0
+VisualStudioVersion = 18.0.11222.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
@@ -12,6 +12,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthStack.Ordering.Api", "src\HealthStack.Ordering.Api\HealthStack.Ordering.Api.csproj", "{36B6D4B6-C559-4444-92EB-22C4C460B7F7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthStack.Auth.Api", "src\HealthStack.Auth.Api\HealthStack.Auth.Api.csproj", "{2A1F0BC6-426A-48C1-BE2B-1A26E550C983}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthStack.Auth.UnitTests", "tests\HealthStack.Auth.UnitTests\HealthStack.Auth.UnitTests.csproj", "{5545E237-B3D6-4A70-9263-D14DBD196198}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +75,18 @@ Global
 		{2A1F0BC6-426A-48C1-BE2B-1A26E550C983}.Release|x64.Build.0 = Release|Any CPU
 		{2A1F0BC6-426A-48C1-BE2B-1A26E550C983}.Release|x86.ActiveCfg = Release|Any CPU
 		{2A1F0BC6-426A-48C1-BE2B-1A26E550C983}.Release|x86.Build.0 = Release|Any CPU
+		{5545E237-B3D6-4A70-9263-D14DBD196198}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5545E237-B3D6-4A70-9263-D14DBD196198}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5545E237-B3D6-4A70-9263-D14DBD196198}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5545E237-B3D6-4A70-9263-D14DBD196198}.Debug|x64.Build.0 = Debug|Any CPU
+		{5545E237-B3D6-4A70-9263-D14DBD196198}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5545E237-B3D6-4A70-9263-D14DBD196198}.Debug|x86.Build.0 = Debug|Any CPU
+		{5545E237-B3D6-4A70-9263-D14DBD196198}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5545E237-B3D6-4A70-9263-D14DBD196198}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5545E237-B3D6-4A70-9263-D14DBD196198}.Release|x64.ActiveCfg = Release|Any CPU
+		{5545E237-B3D6-4A70-9263-D14DBD196198}.Release|x64.Build.0 = Release|Any CPU
+		{5545E237-B3D6-4A70-9263-D14DBD196198}.Release|x86.ActiveCfg = Release|Any CPU
+		{5545E237-B3D6-4A70-9263-D14DBD196198}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -80,6 +96,7 @@ Global
 		{02BF453B-A7EC-41B4-95B2-5DA802C74A37} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{36B6D4B6-C559-4444-92EB-22C4C460B7F7} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{2A1F0BC6-426A-48C1-BE2B-1A26E550C983} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{5545E237-B3D6-4A70-9263-D14DBD196198} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C9B0A41E-0785-410A-A525-F40700EFE060}

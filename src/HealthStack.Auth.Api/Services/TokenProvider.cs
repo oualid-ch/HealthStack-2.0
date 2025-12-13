@@ -5,7 +5,7 @@ using HealthStack.Auth.Api.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace HealthStack.Auth.Api.Utils
+namespace HealthStack.Auth.Api.Services
 {
     public class TokenProvider(IOptions<JwtSettings> options)
     {
