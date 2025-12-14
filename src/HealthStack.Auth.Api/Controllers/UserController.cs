@@ -48,11 +48,10 @@ namespace HealthStack.Auth.Api.Controllers
             var (user, token) = await _userService.LoginUserAsync(userLoginDto.Email, userLoginDto.Password);
 
             return Ok(
-                new
-                {
-                    Token = token,
-                    User = _mapper.Map<UserReadDto>(user)
-                }
+                new LoginResponseDto(
+                    token,
+                    _mapper.Map<UserReadDto>(user)
+                )
             );
         }
 
@@ -72,10 +71,10 @@ namespace HealthStack.Auth.Api.Controllers
             var (created, token) = await _userService.RegisterUserAsync(user);
 
             return CreatedAtAction(nameof(GetCurrentUser), null, new
-            {
-                Token = token,
-                User = _mapper.Map<UserReadDto>(created)
-            });
+            RegisterResponseDto(
+                token,
+                _mapper.Map<UserReadDto>(created)
+            ));
         }
 
         // -------------------------------------------------------------
@@ -87,7 +86,7 @@ namespace HealthStack.Auth.Api.Controllers
         {
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if(userIdClaim == null)
-                return Unauthorized(new {message = "Authentication required"});
+                return Unauthorized(new ErrorResponseDto("Authentication required"));
 
             var user = await _userService.GetUserByIdAsync(Guid.Parse(userIdClaim));
             return Ok(_mapper.Map<UserReadDto>(user));
