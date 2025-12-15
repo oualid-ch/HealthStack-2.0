@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace HealthStack.Auth.Api.Services
 {
-    public class TokenProvider(IOptions<JwtSettings> options)
+    public class TokenProvider(IOptions<JwtSettings> options) : ITokenProvider
     {
     private readonly JwtSettings _jwtSettings = options.Value;
 

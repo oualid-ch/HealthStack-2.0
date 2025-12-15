@@ -54,7 +54,6 @@ public class UserService(
 
             // encrypt password
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
-            string token = _tokenProvider.GenerateToken(user);
 
             // save user to db
             _context.Users.Add(user);
@@ -62,7 +61,7 @@ public class UserService(
 
             _logger.LogInformation("User {UserId} registered successfully", LogUtils.MaskGuid(user.Id));
             
-            return (user, token);
+            return (user, _tokenProvider.GenerateToken(user));
         }
     }
 }
