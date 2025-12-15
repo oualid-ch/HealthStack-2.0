@@ -1,3 +1,4 @@
+using FluentAssertions;
 using HealthStack.Auth.Api.Data;
 using HealthStack.Auth.Api.Exceptions;
 using HealthStack.Auth.Api.Models;
@@ -63,11 +64,10 @@ namespace HealthStack.Auth.UnitTests
             var user = await _sut.GetUserByIdAsync(seededUser.Id);
 
             // Assert
-            Assert.Equal(seededUser, user);
-
+            user.Should().BeEquivalentTo(seededUser);
             var savedUser = await _context.Users.FindAsync(user.Id);
-            Assert.NotNull(savedUser);
-            Assert.Equal(user.Email, savedUser.Email);
+            savedUser.Should().NotBeNull();
+            savedUser!.Email.Should().Be(user.Email);
         }
 
         [Fact]
@@ -77,11 +77,11 @@ namespace HealthStack.Auth.UnitTests
             var seededUser = await SeedUserAsync();
 
             // Act
-            async Task act() => await _sut.GetUserByIdAsync(Guid.Parse("e02fd0e4-00fd-090a-ca30-0d00a0038ba0")); // Fake Guid
+            Func<Task> act = async () => await _sut.GetUserByIdAsync(Guid.Parse("e02fd0e4-00fd-090a-ca30-0d00a0038ba0")); // Fake Guid
 
             // Assert
-            var exception = await Assert.ThrowsAsync<UserIdNotFoundException>(act);
-            Assert.Equal(exception.UserId, Guid.Parse("e02fd0e4-00fd-090a-ca30-0d00a0038ba0"));
+            await act.Should().ThrowAsync<UserIdNotFoundException>()
+                .Where(e => e.UserId == Guid.Parse("e02fd0e4-00fd-090a-ca30-0d00a0038ba0"));
         }
 
         // --------------------------------------LoginUserAsync--------------------------------------
@@ -95,8 +95,8 @@ namespace HealthStack.Auth.UnitTests
             var (user, token) = await _sut.LoginUserAsync(seededUser.Email, "Password123!");
 
             // Assert
-            Assert.Equal("TEST_TOKEN", token);
-            Assert.Equal(seededUser.Email, user.Email);
+            token.Should().Be("TEST_TOKEN");
+            user.Email.Should().Be(seededUser.Email);
         }
 
         [Fact]
@@ -106,11 +106,11 @@ namespace HealthStack.Auth.UnitTests
             var seededUser = await SeedUserAsync();
 
             // Act
-            async Task act() => await _sut.LoginUserAsync("wrong@mail.com", "password_does_not_matter");
+            Func<Task> act = async () => await _sut.LoginUserAsync("wrong@mail.com", "password_does_not_matter");
 
             // Assert
-            var exception = await Assert.ThrowsAsync<UserNotFoundException>(act);
-            Assert.Equal("wrong@mail.com", exception.Email);
+            await act.Should().ThrowAsync<UserNotFoundException>()
+                    .Where(e => e.Email == "wrong@mail.com");
         }
         
         [Fact]
@@ -119,15 +119,16 @@ namespace HealthStack.Auth.UnitTests
             // Arrange
             var seededUser = await SeedUserAsync();
             var WrongPassword = "WrongPassword!";
+
             // Act
-            async Task act() => await _sut.LoginUserAsync(seededUser.Email, WrongPassword);
+            Func<Task> act = async () => await _sut.LoginUserAsync(seededUser.Email, WrongPassword);
 
             // Assert
-            var exception = await Assert.ThrowsAsync<InvalidPasswordException>(act);
-            Assert.Equal(seededUser.Id, exception.UserId);
-            Assert.NotEqual(WrongPassword, seededUser.Password);
-            Assert.True(BCrypt.Net.BCrypt.Verify("Password123!", seededUser.Password)); // Password hardcoded in SeedUserAsync
+            await act.Should().ThrowAsync<InvalidPasswordException>()
+                    .Where(e => e.UserId == seededUser.Id);
 
+            seededUser.Password.Should().NotBe(WrongPassword);
+            BCrypt.Net.BCrypt.Verify("Password123!", seededUser.Password).Should().BeTrue();
         }
     
         // -------------------------------------RegisterUserAsync------------------------------------
@@ -151,8 +152,8 @@ namespace HealthStack.Auth.UnitTests
             var (savedUser, token) = await _sut.RegisterUserAsync(newUser);
 
             // Assert
-            Assert.Equal("TEST_TOKEN", token);
-            Assert.Equal(newUser.Email, savedUser.Email);
+            token.Should().Be("TEST_TOKEN");
+            savedUser.Email.Should().Be(newUser.Email);
         }
 
         [Fact]
@@ -172,12 +173,11 @@ namespace HealthStack.Auth.UnitTests
             };
 
             // Act
-            // var (user, token) = await sut.RegisterUserAsync(newUser);
-            async Task act() => await _sut.RegisterUserAsync(newUser);
+            Func<Task> act = async () => await _sut.RegisterUserAsync(newUser);
 
             // Assert
-            var exception = await Assert.ThrowsAsync<EmailAlreadyExistsException>(act);
-            Assert.Equal(exception.Email, newUser.Email);
+            await act.Should().ThrowAsync<EmailAlreadyExistsException>()
+                    .Where(e => e.Email == newUser.Email);
         }
     }
 }

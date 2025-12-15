@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using AutoMapper;
+using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
 using HealthStack.Auth.Api.Controllers;
@@ -67,8 +68,10 @@ namespace HealthStack.Auth.UnitTests
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             var body = Assert.IsType<LoginResponseDto>(okResult.Value);
-            Assert.Equal("TEST_TOKEN", body.Token);
-            Assert.Equal(userReadDto, body.User);
+            
+            body.Token.Should().Be("TEST_TOKEN");
+            body.User.Should().BeEquivalentTo(userReadDto);
+
         }
 
         [Fact]
@@ -88,8 +91,9 @@ namespace HealthStack.Auth.UnitTests
             var badRequest = Assert.IsType<BadRequestObjectResult>(result);
             var errors = Assert.IsType<Dictionary<string, string[]>>(badRequest.Value);
 
-            Assert.True(errors.ContainsKey("Email"));
-            Assert.Contains("Required", errors["Email"]);
+            errors.Should().ContainKey("Email");
+            errors["Email"].Should().Contain("Required");
+
         }
 
         // -------------------------------------------------------------
@@ -133,8 +137,9 @@ namespace HealthStack.Auth.UnitTests
             var ActionResult = Assert.IsType<ActionResult<UserReadDto>>(result);
             var createdResult = Assert.IsType<CreatedAtActionResult>(ActionResult.Result);
             var body = Assert.IsType<RegisterResponseDto>(createdResult.Value);
-            Assert.Equal("TEST_TOKEN", body.Token);
-            Assert.Equal(userReadDto, body.User);
+
+            body.Token.Should().Be("TEST_TOKEN");
+            body.User.Should().BeEquivalentTo(userReadDto);
         }
 
         [Fact]
@@ -153,8 +158,9 @@ namespace HealthStack.Auth.UnitTests
 
             // Assert
             var ActionResult = Assert.IsType<ActionResult<UserReadDto>>(result);
-            var badRequest = Assert.IsType<BadRequestObjectResult>(ActionResult.Result);
-            var errors = Assert.IsType<Dictionary<string, string[]>>(badRequest.Value);
+
+            var badRequest = ActionResult.Result.Should().BeOfType<BadRequestObjectResult>().Subject;
+            var errors = badRequest.Value.Should().BeOfType<Dictionary<string, string[]>>().Subject;
         }
 
         // -------------------------------------------------------------
@@ -184,7 +190,7 @@ namespace HealthStack.Auth.UnitTests
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal(userReadDto, okResult.Value);
+            okResult.Value.Should().BeEquivalentTo(userReadDto);
         }
 
         [Fact]
@@ -200,7 +206,8 @@ namespace HealthStack.Auth.UnitTests
             // Assert
             var unauthorized = Assert.IsType<UnauthorizedObjectResult>(result);
             var body = Assert.IsType<ErrorResponseDto>(unauthorized.Value);
-            Assert.Equal("Authentication required", body.Message);
+
+            body.Message.Should().Be("Authentication required");
         }
     }
 }
