@@ -165,10 +165,10 @@ namespace HealthStack.Auth.UnitTests
         {
             // Arrange
             var userId = Guid.NewGuid();
-            var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new[]
-            {
+            var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(
+            [
                 new Claim(ClaimTypes.NameIdentifier, userId.ToString())
-            }));
+            ]));
 
             var user = new User { Id = userId, Email = "test@test.com" };
             _userServiceMock.Setup(s => s.GetUserByIdAsync(userId))
