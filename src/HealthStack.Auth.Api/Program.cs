@@ -67,11 +67,11 @@ builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
-// TODO: temporary 
-if (app.Environment.IsEnvironment("Test"))
-{
-    app.UseDeveloperExceptionPage();
-}
+// // TODO: temporary 
+// if (app.Environment.IsEnvironment("Test"))
+// {
+//     app.UseDeveloperExceptionPage();
+// }
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
