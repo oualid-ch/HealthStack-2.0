@@ -58,7 +58,7 @@ namespace HealthStack.Auth.Api.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "CreatedAt", "DateOfBirth", "Email", "FirstName", "LastName", "Password", "PhoneNumber", "Role", "UpdatedAt" },
-                values: new object[] { new Guid("3f2504e0-4f89-11d3-9a0c-0305e82c3301"), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "john@example.com", "John", "Doe", "$2a$11$I/.MeZXNc/fQmKhUk6epu.X9LUaTrANpOYysHu0kpOwcVpc9GFkqG", "+49 228 123456", "User", null });
+                values: new object[] { new Guid("3f2504e0-4f89-11d3-9a0c-0305e82c3301"), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "john@example.com", "John", "Doe", "$2a$11$I/.MeZXNc/fQmKhUk6epu.X9LUaTrANpOYysHu0kpOwcVpc9GFkqG", "+49 228 123456", "Admin", null });
 
             migrationBuilder.InsertData(
                 table: "Address",

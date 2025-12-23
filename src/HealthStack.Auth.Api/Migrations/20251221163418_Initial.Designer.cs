@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthStack.Auth.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251211175355_Initial")]
+    [Migration("20251221163418_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -81,7 +81,7 @@ namespace HealthStack.Auth.Api.Migrations
                             LastName = "Doe",
                             Password = "$2a$11$I/.MeZXNc/fQmKhUk6epu.X9LUaTrANpOYysHu0kpOwcVpc9GFkqG",
                             PhoneNumber = "+49 228 123456",
-                            Role = "User"
+                            Role = "Admin"
                         });
                 });
 

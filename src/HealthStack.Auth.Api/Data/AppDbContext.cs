@@ -24,8 +24,8 @@ namespace HealthStack.Auth.Api.Data
                     FirstName = "John",
                     LastName = "Doe",
                     Email = "john@example.com",
-                    Password = "$2a$11$I/.MeZXNc/fQmKhUk6epu.X9LUaTrANpOYysHu0kpOwcVpc9GFkqG",
-                    Role = "User",
+                    Password = "$2a$11$I/.MeZXNc/fQmKhUk6epu.X9LUaTrANpOYysHu0kpOwcVpc9GFkqG", // password123
+                    Role = "Admin",
                     DateOfBirth = new DateTime(1990, 1, 1),
                     PhoneNumber = "+49 228 123456",
                     CreatedAt = new DateTime(2024, 01, 01)

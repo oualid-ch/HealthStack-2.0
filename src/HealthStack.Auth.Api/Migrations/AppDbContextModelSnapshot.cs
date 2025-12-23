@@ -78,7 +78,7 @@ namespace HealthStack.Auth.Api.Migrations
                             LastName = "Doe",
                             Password = "$2a$11$I/.MeZXNc/fQmKhUk6epu.X9LUaTrANpOYysHu0kpOwcVpc9GFkqG",
                             PhoneNumber = "+49 228 123456",
-                            Role = "User"
+                            Role = "Admin"
                         });
                 });
 

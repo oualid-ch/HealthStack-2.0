@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using FluentValidation;
 using HealthStack.Auth.Api.Data;
@@ -10,8 +12,6 @@ using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddAuthorization();
 
 // Add services to the container.
 
@@ -31,22 +31,25 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+    options.RequireHttpsMetadata = true;
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
+
         ValidIssuer = jwtSettings!.Issuer,
         ValidAudience = jwtSettings.Audience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
+
+        NameClaimType = JwtRegisteredClaimNames.Sub,
+        RoleClaimType = ClaimTypes.Role
     };
 });
 
 // Add authorization
 builder.Services.AddAuthorization();
-
-builder.Services.AddSingleton<TokenProvider>();
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
@@ -58,8 +61,10 @@ if (!builder.Environment.IsEnvironment("Test"))
 }
 
 builder.Services.AddAutoMapper(typeof(Program));
+
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenProvider, TokenProvider>();
+
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -67,7 +72,7 @@ builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
-// // TODO: temporary 
+// TODO: temporary 
 // if (app.Environment.IsEnvironment("Test"))
 // {
 //     app.UseDeveloperExceptionPage();
