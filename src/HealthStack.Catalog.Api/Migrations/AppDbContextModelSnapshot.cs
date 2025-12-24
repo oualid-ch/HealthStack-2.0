@@ -28,15 +28,30 @@ namespace HealthStack.Catalog.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Categories");
 
@@ -44,13 +59,17 @@ namespace HealthStack.Catalog.Api.Migrations
                         new
                         {
                             Id = new Guid("093bec4a-006f-41b6-a594-e4f236563c3e"),
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Health and nutrition supplements",
+                            IsActive = true,
                             Name = "Supplements"
                         },
                         new
                         {
                             Id = new Guid("e978ea0e-68f1-4b62-928f-7034cd56ab7e"),
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Personal hygiene and sanitation products",
+                            IsActive = true,
                             Name = "Hygiene"
                         });
                 });
@@ -71,6 +90,9 @@ namespace HealthStack.Catalog.Api.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -88,7 +110,7 @@ namespace HealthStack.Catalog.Api.Migrations
 
                     b.Property<string>("Sku")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -96,6 +118,9 @@ namespace HealthStack.Catalog.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("Sku")
+                        .IsUnique();
 
                     b.ToTable("Products");
 

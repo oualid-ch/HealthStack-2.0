@@ -18,8 +18,12 @@ namespace HealthStack.Catalog.Api.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -31,7 +35,7 @@ namespace HealthStack.Catalog.Api.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Sku = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Sku = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Brand = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -39,7 +43,8 @@ namespace HealthStack.Catalog.Api.Migrations
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -54,27 +59,39 @@ namespace HealthStack.Catalog.Api.Migrations
 
             migrationBuilder.InsertData(
                 table: "Categories",
-                columns: new[] { "Id", "Description", "Name" },
+                columns: new[] { "Id", "CreatedAt", "DeletedAt", "Description", "IsActive", "Name", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { new Guid("093bec4a-006f-41b6-a594-e4f236563c3e"), "Health and nutrition supplements", "Supplements" },
-                    { new Guid("e978ea0e-68f1-4b62-928f-7034cd56ab7e"), "Personal hygiene and sanitation products", "Hygiene" }
+                    { new Guid("093bec4a-006f-41b6-a594-e4f236563c3e"), new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "Health and nutrition supplements", true, "Supplements", null },
+                    { new Guid("e978ea0e-68f1-4b62-928f-7034cd56ab7e"), new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "Personal hygiene and sanitation products", true, "Hygiene", null }
                 });
 
             migrationBuilder.InsertData(
                 table: "Products",
-                columns: new[] { "Id", "Brand", "CategoryId", "CreatedAt", "Description", "IsActive", "Name", "Price", "Sku", "UpdatedAt" },
+                columns: new[] { "Id", "Brand", "CategoryId", "CreatedAt", "DeletedAt", "Description", "IsActive", "Name", "Price", "Sku", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { new Guid("78b983cb-d782-42ea-9eec-43b402463a56"), "HealthPlus", new Guid("093bec4a-006f-41b6-a594-e4f236563c3e"), new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Boosts immunity", true, "Vitamin C 500mg", 12.99m, "HS1001", null },
-                    { new Guid("813755d7-3f15-47a7-b479-908e281d69c3"), "NutriLife", new Guid("093bec4a-006f-41b6-a594-e4f236563c3e"), new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Supports heart and brain health", true, "Omega-3 Fish Oil", 19.50m, "HS1002", null },
-                    { new Guid("d7e749e9-f685-49f9-b855-b0a1684db9db"), "SafeHands", new Guid("e978ea0e-68f1-4b62-928f-7034cd56ab7e"), new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Kills 99.9% germs", true, "Hand Sanitizer 250ml", 5.75m, "HS1003", null }
+                    { new Guid("78b983cb-d782-42ea-9eec-43b402463a56"), "HealthPlus", new Guid("093bec4a-006f-41b6-a594-e4f236563c3e"), new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "Boosts immunity", true, "Vitamin C 500mg", 12.99m, "HS1001", null },
+                    { new Guid("813755d7-3f15-47a7-b479-908e281d69c3"), "NutriLife", new Guid("093bec4a-006f-41b6-a594-e4f236563c3e"), new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "Supports heart and brain health", true, "Omega-3 Fish Oil", 19.50m, "HS1002", null },
+                    { new Guid("d7e749e9-f685-49f9-b855-b0a1684db9db"), "SafeHands", new Guid("e978ea0e-68f1-4b62-928f-7034cd56ab7e"), new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "Kills 99.9% germs", true, "Hand Sanitizer 250ml", 5.75m, "HS1003", null }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_Name",
+                table: "Categories",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",
                 table: "Products",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_Sku",
+                table: "Products",
+                column: "Sku",
+                unique: true);
         }
 
         /// <inheritdoc />

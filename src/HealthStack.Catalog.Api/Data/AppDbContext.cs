@@ -31,13 +31,17 @@ namespace HealthStack.Catalog.Api.Data
                 {
                     Id = Guid.Parse("093bec4a-006f-41b6-a594-e4f236563c3e"),
                     Name = "Supplements",
-                    Description = "Health and nutrition supplements"
+                    Description = "Health and nutrition supplements",
+                    IsActive = true,
+                    CreatedAt = new DateTime(2025, 12, 01)
                 },
                 new Category
                 {
                     Id = Guid.Parse("e978ea0e-68f1-4b62-928f-7034cd56ab7e"),
                     Name = "Hygiene",
-                    Description = "Personal hygiene and sanitation products"
+                    Description = "Personal hygiene and sanitation products",
+                    IsActive = true,
+                    CreatedAt = new DateTime(2025, 12, 01)
                 }
             );
 
