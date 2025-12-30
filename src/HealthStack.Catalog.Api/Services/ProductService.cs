@@ -19,11 +19,12 @@ public class ProductService(
     private readonly AppDbContext _context = context;
     private readonly ILogger<ProductService> _logger = logger;
     private readonly ICurrentUser _currentUser = currentUser;
+
     public async Task<Product> GetProductByIdAsync(Guid id)
     {
         var product = await _context.Products
             .Include(p => p.Category)
-            .SingleOrDefaultAsync(p => p.Id == id);
+            .SingleOrDefaultAsync(p => p.Id == id && p.IsActive);
         
         return product ?? throw new ProductIdNotFoundException(id);
     }
