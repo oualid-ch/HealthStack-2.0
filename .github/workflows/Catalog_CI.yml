@@ -1,9 +1,17 @@
-name: HealthStack Auth CI
+name: HealthStack Catalog CI
 
 on:
   push:
+    paths:
+      - "src/HealthStack.Catalog/**"
+      - "tests/HealthStack.Catalog.UnitTests/**"
+      - "tests/HealthStack.Catalog.IntegrationTests/**"
     branches: ["master"]
   pull_request:
+    paths:
+      - "src/HealthStack.Catalog/**"
+      - "tests/HealthStack.Catalog.UnitTests/**"
+      - "tests/HealthStack.Catalog.IntegrationTests/**"
     branches: ["master"]
 
 jobs:
@@ -31,8 +39,8 @@ jobs:
 
       # 5. Run unit tests
       - name: Run unit tests
-        run: dotnet test tests/HealthStack.Auth.UnitTests --no-build --configuration Release --logger "trx;LogFileName=unit-tests.trx"
+        run: dotnet test tests/HealthStack.Catalog.UnitTests --no-build --configuration Release --logger "trx;LogFileName=unit-tests.trx"
 
       # 6. Run integration tests
       - name: Run integration tests
-        run: dotnet test tests/HealthStack.Auth.IntegrationTests --no-build --configuration Release --logger "trx;LogFileName=integration-tests.trx"
+        run: dotnet test tests/HealthStack.Catalog.IntegrationTests --no-build --configuration Release --logger "trx;LogFileName=integration-tests.trx"
