@@ -28,7 +28,7 @@ public class CategoryControllerUnitTests
         );
 
     [Fact]
-    public async Task GetCategories_ReturnsOkWithMappedProducts()
+    public async Task GetCategories_ReturnsOkWithMappedCategories()
     {
         // Arrange
         var categories = new List<Category>
@@ -63,7 +63,7 @@ public class CategoryControllerUnitTests
 
 
     [Fact]
-    public async Task AddProduct_ValidModel_ReturnsCreated()
+    public async Task AddCategory_ValidModel_ReturnsCreated()
     {
         var dto = new CategoryCreateDto { Name = "Test" };
         var category = new Category { Id = Guid.NewGuid() };
@@ -94,7 +94,7 @@ public class CategoryControllerUnitTests
     }
 
     [Fact]
-    public async Task AddProduct_InvalidModel_ReturnsBadRequest()
+    public async Task AddCategory_InvalidModel_ReturnsBadRequest()
     {
         var dto = new CategoryCreateDto();
 
@@ -112,7 +112,7 @@ public class CategoryControllerUnitTests
     }
 
     [Fact]
-    public async Task UpdateProduct_ValidModel_ReturnsOk()
+    public async Task UpdateCategory_ValidModel_ReturnsOk()
     {
         var dto = new CategoryUpdateDto { Name = "Updated" };
         var category = new Category { Id = Guid.NewGuid(), Name = "Updated" };
@@ -139,7 +139,7 @@ public class CategoryControllerUnitTests
     }
 
     [Fact]
-    public async Task DeleteProduct_ReturnsOk()
+    public async Task DeleteCategory_ReturnsOk()
     {
         var id = Guid.NewGuid();
         var controller = CreateController();
@@ -151,7 +151,7 @@ public class CategoryControllerUnitTests
     }
 
     [Fact]
-    public async Task RestoreProduct_ReturnsOk()
+    public async Task RestoreCategory_ReturnsOk()
     {
         var id = Guid.NewGuid();
         var controller = CreateController();
