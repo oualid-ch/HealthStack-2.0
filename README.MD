@@ -5,16 +5,13 @@ This is a Phase 1 MVP showcasing backend skills with .NET 10, EF Core, JWT authe
 
 ---
 
-## 🏗 Architecture Overview
-
-Phase 1 includes the following services:
+## Architecture Overview
 
 | Service | Description |
 |---------|------------|
 | [Auth Service](./src/HealthStack.Auth.Api/README.md) | Handles user registration, login, JWT authentication, and roles |
-| Catalog Service | Manages products and stock (planned) |
-| Cart Service | Manages user shopping carts (planned) |
-| Ordering Service | Handles order lifecycle (planned) |
+| [Catalog Service](./src/HealthStack.Catalog.Api/README.MD) | Manages products |
+| Order Service | Handles order lifecycle |
 
 **JWT Authentication Flow:**  
 1. User registers or logs in via Auth service  
