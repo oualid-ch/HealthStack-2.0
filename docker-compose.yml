@@ -1,4 +1,17 @@
 services:
+  # auth:
+  #   build:
+  #     context: ./src/HealthStack.Auth.Api
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "5000:8080"
+  #   environment:
+  #     ConnectionStrings__Default: "Server=userdb,1433;Database=AuthDb;User Id=sa;Password=Walid@1235;"
+  #   depends_on:
+  #     - userdb
+  #   networks:
+  #     - appnet
+
   userdb:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
@@ -10,6 +23,19 @@ services:
       - userdb-data:/var/opt/mssql
     networks:
       - appnet
+
+  # catalog:
+  #   build:
+  #     context: ./src/HealthStack.Catalog.Api
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "5001:8080"
+  #   environment:
+  #     ConnectionStrings__Default: "Server=catalogdb,1433;Database=CatalogDb;User Id=sa;Password=Walid@1235;"
+  #   depends_on:
+  #     - catalogdb
+  #   networks:
+  #     - appnet
 
   catalogdb:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -35,6 +61,17 @@ services:
     networks:
       - appnet
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672" # RabbitMQ
+      - "15672:15672" # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - appnet
 networks:
   appnet:
 
