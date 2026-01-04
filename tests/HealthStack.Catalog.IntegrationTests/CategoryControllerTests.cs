@@ -42,7 +42,7 @@ public class CategoryControllerTests : IClassFixture<CatalogApiFactory>
     {
         var createDto = new CategoryCreateDto
         {
-            Name = "Supplements",
+            Name = $"Supplements-{Guid.NewGuid()}",
             Description = "Vitamins and more"
         };
         var create = await _client.PostAsJsonAsync("/api/category", createDto);

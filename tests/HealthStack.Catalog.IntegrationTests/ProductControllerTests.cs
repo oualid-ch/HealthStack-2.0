@@ -19,7 +19,7 @@ public class ProductControllerTests : IClassFixture<CatalogApiFactory>
     private async Task<Guid> CreateCategoryAsync()
     {
         var response = await _client.PostAsJsonAsync("/api/category",
-            new CategoryCreateDto { Name = "Devices", Description = "Medical Devices" });
+            new CategoryCreateDto { Name = $"Supplements-{Guid.NewGuid()}", Description = "Medical Devices" });
 
         var category = await response.Content.ReadFromJsonAsync<CategoryReadDto>();
         return category!.Id;

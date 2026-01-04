@@ -12,6 +12,7 @@ namespace HealthStack.Catalog.IntegrationTests;
 
 public class CatalogApiFactory : WebApplicationFactory<Program>
 {
+     private SqliteConnection _connection = null!;
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Test");
@@ -33,13 +34,13 @@ public class CatalogApiFactory : WebApplicationFactory<Program>
             services.RemoveAll<AppDbContext>();
 
             // Create SQLite in-memory shared connection
-            var connection = new SqliteConnection("DataSource=:memory:");
-            connection.Open();
+            _connection = new SqliteConnection($"DataSource=file:{Guid.NewGuid()}?mode=memory&cache=shared");
+            _connection.Open();
 
             // Add AppDbContext using the same connection
             services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseSqlite(connection);
+                options.UseSqlite(_connection);
             });
 
             // Build ServiceProvider to run migrations/schema creation
@@ -48,5 +49,11 @@ public class CatalogApiFactory : WebApplicationFactory<Program>
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             db.Database.EnsureCreated();
         });
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        _connection?.Dispose();
     }
 }
