@@ -6,6 +6,7 @@ using HealthStack.Order.Api.Auth;
 using HealthStack.Order.Api.Clients;
 using HealthStack.Order.Api.Data;
 using HealthStack.Order.Api.Exceptions;
+using HealthStack.Order.Api.Messaging;
 using HealthStack.Order.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -59,6 +60,11 @@ builder.Services.AddProblemDetails();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 builder.Services.AddHttpClient<IProductClient, ProductClient>();
+
+builder.Services.Configure<RabbitMqOptions>(
+    builder.Configuration.GetSection("RabbitMQ"));
+
+builder.Services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
 
 
 var app = builder.Build();
