@@ -2,15 +2,15 @@
 
 **HealthStack** is a microservices-based eCommerce backend platform focused on health products.
 
-This repository showcases real-world backend engineering practices using **.NET 10**, **ASP.NET Core**, **Entity Framework Core**, **JWT authentication**, and both **synchronous and asynchronous service communication**.
+This repository showcases real-world backend engineering practices using **.NET 10**, **ASP.NET Core**, **Entity Framework Core**, **JWT authentication**, and both **synchronous and asynchronous service communication** via an **API Gateway (YARP)**.
 
-The goal of this project is to demonstrate **clean architecture**, **microservices fundamentals**, and **production-ready patterns** while keeping the scope intentionally small.
+The goal of this project is to demonstrate **clean architecture**, **microservices fundamentals**, and **production-ready patterns** while keeping the scope intentionally small and MVP-focused.
 
 ---
 
 ## Architecture Overview
 
-HealthStack follows a **microservices architecture** with clear service boundaries and independent data stores.
+HealthStack follows a **microservices architecture** with clear service boundaries, independent data stores, and a **reverse proxy gateway** as a single entry point.
 
 ### Services
 
@@ -20,6 +20,7 @@ HealthStack follows a **microservices architecture** with clear service boundari
 | [Catalog Service](./src/HealthStack.Catalog.Api/README.md) | Product and category management |
 | [Order Service](./src/HealthStack.Order.Api/README.md) | Order creation, retrieval, and event publishing |
 | [Notification Worker](./src/HealthStack.Notification.Worker/README.md) | Background worker consuming order events |
+| [API Gateway (YARP)](./src/HealthStack.Gateway) | Single entry point routing requests to microservices |
 
 ---
 
@@ -27,17 +28,19 @@ HealthStack follows a **microservices architecture** with clear service boundari
 
 ### Authentication (JWT)
 
-1. User registers or logs in via **Auth Service**
-2. Auth Service issues a **JWT**
-3. Other services validate JWT and extract user identity & role
+1. User registers or logs in via **Auth Service**  
+2. Auth Service issues a **JWT**  
+3. Other services validate JWT via a shared secret and extract user identity & role  
+
+All service endpoints behind the **API Gateway** require JWT for authenticated operations.
 
 ---
 
 ### Synchronous Communication (HTTP)
 
-* **Order Service → Catalog Service**
-* Used during order creation to fetch product name and price
-* Product data is snapshotted into the order for historical accuracy
+* **Order Service → Catalog Service**  
+* Used during order creation to fetch product name and price  
+* Product data is **snapshotted** into the order for historical accuracy  
 
 ---
 
@@ -54,15 +57,29 @@ This demonstrates:
 
 ---
 
+## API Gateway Routing (YARP)
+
+The **API Gateway** exposes routes for all services:
+
+| Path | Forwarded To |
+|------|--------------|
+| `/auth/...` | Auth Service |
+| `/catalog/...` | Catalog Service |
+| `/order/...` | Order Service |
+
+Transforms strip the service prefix so that microservices receive clean paths.
+
+---
+
 ## Key Design Principles
 
-* Clear service boundaries
-* Database per service
-* DTO-based communication
-* Snapshotting external data
-* Clean layered architecture
-* Minimal but realistic infrastructure
-* Learning-focused implementation
+* Clear **service boundaries**  
+* Independent database per service  
+* DTO-based communication between services  
+* Snapshotting external data for historical accuracy  
+* Clean layered architecture (Controllers → Services → Data/Clients)  
+* Minimal but realistic infrastructure (Docker + RabbitMQ + SQL Server)  
+* Learning-focused MVP design  
 
 ---
 
