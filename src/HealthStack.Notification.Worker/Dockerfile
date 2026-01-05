@@ -10,10 +10,10 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/HealthStack.Notification.Worker/HealthStack.Notification.Worker.csproj", "src/HealthStack.Notification.Worker/"]
-RUN dotnet restore "./src/HealthStack.Notification.Worker/HealthStack.Notification.Worker.csproj"
+COPY ["HealthStack.Notification.Worker.csproj", "."]
+RUN dotnet restore "./HealthStack.Notification.Worker.csproj"
 COPY . .
-WORKDIR "/src/src/HealthStack.Notification.Worker"
+WORKDIR "/src/."
 RUN dotnet build "./HealthStack.Notification.Worker.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage

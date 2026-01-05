@@ -1,17 +1,19 @@
 services:
-  # auth:
-  #   build:
-  #     context: ./src/HealthStack.Auth.Api
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "5000:8080"
-  #   environment:
-  #     ConnectionStrings__Default: "Server=userdb,1433;Database=AuthDb;User Id=sa;Password=Walid@1235;"
-  #   depends_on:
-  #     - userdb
-  #   networks:
-  #     - appnet
+  # ===== Auth Service =====
+  auth:
+    build:
+      context: ./src/HealthStack.Auth.Api
+      dockerfile: Dockerfile
+    ports:
+      - "5100:8080"
+    environment:
+      ConnectionStrings__Default: "Server=userdb,1433;Database=UserDB;User Id=sa;Password=Walid@1235;TrustServerCertificate=True;"
+    depends_on:
+      - userdb
+    networks:
+      - appnet
 
+  # Auth DB
   userdb:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
@@ -23,20 +25,27 @@ services:
       - userdb-data:/var/opt/mssql
     networks:
       - appnet
+    healthcheck:
+      test: ["CMD-SHELL", "echo > /dev/tcp/localhost/1433"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  # catalog:
-  #   build:
-  #     context: ./src/HealthStack.Catalog.Api
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "5001:8080"
-  #   environment:
-  #     ConnectionStrings__Default: "Server=catalogdb,1433;Database=CatalogDb;User Id=sa;Password=Walid@1235;"
-  #   depends_on:
-  #     - catalogdb
-  #   networks:
-  #     - appnet
+  # ===== Catalog Service =====
+  catalog:
+    build:
+      context: ./src/HealthStack.Catalog.Api
+      dockerfile: Dockerfile
+    ports:
+      - "5200:8080"
+    environment:
+      ConnectionStrings__Default: "Server=catalogdb,1433;Database=ProductDB;User Id=sa;Password=Walid@1235;TrustServerCertificate=True;"
+    depends_on:
+      - catalogdb
+    networks:
+      - appnet
 
+  # Catalog DB
   catalogdb:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
@@ -48,7 +57,32 @@ services:
       - catalogdb-data:/var/opt/mssql
     networks:
       - appnet
+    healthcheck:
+      test: ["CMD-SHELL", "echo > /dev/tcp/localhost/1433"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  # ===== Order Service =====
+  order:
+    build:
+      context: ./src/HealthStack.Order.Api
+      dockerfile: Dockerfile
+    ports:
+      - "5300:8080"
+    environment:
+      ConnectionStrings__Default: "Server=orderdb,1433;Database=OrderDB;User Id=sa;Password=Walid@1235;TrustServerCertificate=True;"
+      RabbitMQ__HostName: rabbitmq
+      RabbitMQ__UserName: guest
+      RabbitMQ__Password: guest
+      RabbitMQ__ExchangeName: order.exchange
+    depends_on:
+      - orderdb
+      - rabbitmq
+    networks:
+      - appnet
+
+  # Order DB
   orderdb:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
@@ -60,21 +94,50 @@ services:
       - orderdb-data:/var/opt/mssql
     networks:
       - appnet
+    healthcheck:
+      test: ["CMD-SHELL", "echo > /dev/tcp/localhost/1433"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  # ===== Notification Worker =====
+  notification:
+    build:
+      context: ./src/HealthStack.Notification.Worker
+      dockerfile: Dockerfile
+    environment:
+      RabbitMQ__HostName: rabbitmq
+      RabbitMQ__UserName: guest
+      RabbitMQ__Password: guest
+      RabbitMQ__ExchangeName: order.exchange
+    depends_on:
+      - rabbitmq
+    networks:
+      - appnet
+
+  # ===== RabbitMQ =====
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
     ports:
-      - "5672:5672" # RabbitMQ
+      - "5672:5672" # AMQP
       - "15672:15672" # Management UI
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     networks:
       - appnet
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# ===== Networks =====
 networks:
   appnet:
 
+# ===== Volumes =====
 volumes:
   userdb-data:
   catalogdb-data:

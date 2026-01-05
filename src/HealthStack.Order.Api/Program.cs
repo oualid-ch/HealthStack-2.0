@@ -59,7 +59,15 @@ builder.Services.AddProblemDetails();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
-builder.Services.AddHttpClient<IProductClient, ProductClient>();
+
+var catalogBaseUrl = builder.Configuration["Services:Catalog:BaseUrl"];
+
+builder.Services.AddHttpClient<IProductClient, ProductClient>(client =>
+{
+    client.BaseAddress = new Uri(catalogBaseUrl!);
+});
+
+
 
 builder.Services.Configure<RabbitMqOptions>(
     builder.Configuration.GetSection("RabbitMQ"));

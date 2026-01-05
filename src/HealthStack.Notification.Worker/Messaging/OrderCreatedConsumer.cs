@@ -13,27 +13,53 @@ public class OrderCreatedConsumer(
 {
     private readonly ILogger<OrderCreatedConsumer> _logger = logger;
     private readonly RabbitMqOptions _options = options.Value;
+
     private IConnection? _connection;
     private IModel? _channel;
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var factory = new ConnectionFactory
         {
             HostName = _options.HostName,
             UserName = _options.UserName,
-            Password = _options.Password
+            Password = _options.Password,
+            DispatchConsumersAsync = true
         };
 
-        _connection = factory.CreateConnection();
-        _channel = _connection.CreateModel();
+        // Retry until RabbitMQ is ready
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            try
+            {
+                _connection = factory.CreateConnection();
+                _channel = _connection.CreateModel();
 
+                _logger.LogInformation("Connected to RabbitMQ");
+                break;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(
+                    "RabbitMQ not ready yet. Retrying in 5 seconds. Error: {Message}",
+                    ex.Message
+                );
+
+                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+            }
+        }
+
+        if (_channel is null || stoppingToken.IsCancellationRequested)
+            return;
+
+        // Exchange
         _channel.ExchangeDeclare(
             exchange: _options.ExchangeName,
             type: ExchangeType.Topic,
             durable: true
         );
 
+        // Queue
         _channel.QueueDeclare(
             queue: "notification.order.created.queue",
             durable: true,
@@ -47,36 +73,62 @@ public class OrderCreatedConsumer(
             routingKey: "order.created"
         );
 
-        var consumer = new EventingBasicConsumer(_channel);
+        var consumer = new AsyncEventingBasicConsumer(_channel);
 
-        consumer.Received += (sender, args) =>
+        consumer.Received += async (_, args) =>
         {
-            var json = Encoding.UTF8.GetString(args.Body.ToArray());
-            var evt = JsonSerializer.Deserialize<OrderCreatedEvent>(json);
+            try
+            {
+                var json = Encoding.UTF8.GetString(args.Body.ToArray());
+                var evt = JsonSerializer.Deserialize<OrderCreatedEvent>(json);
 
-            _logger.LogInformation(
-                "[EMAIL] Order confirmation sent for Order {OrderId} (User {UserId}, Total {Total})",
-                evt!.OrderId,
-                evt.UserId,
-                evt.TotalAmount
-            );
+                if (evt is null)
+                    return;
+
+                _logger.LogInformation(
+                    "[EMAIL] Order confirmation sent for Order {OrderId} (User {UserId}, Total {Total})",
+                    evt.OrderId,
+                    evt.UserId,
+                    evt.TotalAmount
+                );
+
+                _channel.BasicAck(args.DeliveryTag, multiple: false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to process OrderCreated event");
+
+                // Requeue message
+                _channel.BasicNack(args.DeliveryTag, false, requeue: true);
+            }
+
+            await Task.CompletedTask;
         };
 
         _channel.BasicConsume(
             queue: "notification.order.created.queue",
-            autoAck: true,
+            autoAck: false,
             consumer: consumer
         );
 
         _logger.LogInformation("Notification service listening for OrderCreated events");
 
-        return Task.CompletedTask;
+        // Keep the worker alive
+        await Task.Delay(Timeout.Infinite, stoppingToken);
     }
 
     public override void Dispose()
     {
-        _channel?.Close();
-        _connection?.Close();
+        try
+        {
+            _channel?.Close();
+            _connection?.Close();
+        }
+        catch
+        {
+            // ignore shutdown errors
+        }
+
         base.Dispose();
     }
 }
