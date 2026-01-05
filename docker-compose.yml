@@ -1,11 +1,25 @@
 services:
+  # ===== API Gateway =====
+  gateway:
+    build:
+      context: ./src/HealthStack.Gateway
+      dockerfile: Dockerfile
+    ports:
+      - "5000:8080" # Public entry point
+    depends_on:
+      - auth
+      - catalog
+      - order
+    networks:
+      - appnet
+
   # ===== Auth Service =====
   auth:
     build:
       context: ./src/HealthStack.Auth.Api
       dockerfile: Dockerfile
-    ports:
-      - "5100:8080"
+    # ports:
+    #   - "5100:8080"
     environment:
       ConnectionStrings__Default: "Server=userdb,1433;Database=UserDB;User Id=sa;Password=Walid@1235;TrustServerCertificate=True;"
     depends_on:
@@ -19,8 +33,8 @@ services:
     environment:
       SA_PASSWORD: "Walid@1235"
       ACCEPT_EULA: "Y"
-    ports:
-      - "1433:1433"
+    # ports:
+    #   - "1433:1433"
     volumes:
       - userdb-data:/var/opt/mssql
     networks:
@@ -36,8 +50,8 @@ services:
     build:
       context: ./src/HealthStack.Catalog.Api
       dockerfile: Dockerfile
-    ports:
-      - "5200:8080"
+    # ports:
+    #   - "5200:8080"
     environment:
       ConnectionStrings__Default: "Server=catalogdb,1433;Database=ProductDB;User Id=sa;Password=Walid@1235;TrustServerCertificate=True;"
     depends_on:
@@ -51,8 +65,8 @@ services:
     environment:
       SA_PASSWORD: "Walid@1235"
       ACCEPT_EULA: "Y"
-    ports:
-      - "1434:1433"
+    # ports:
+    #   - "1434:1433"
     volumes:
       - catalogdb-data:/var/opt/mssql
     networks:
@@ -68,8 +82,8 @@ services:
     build:
       context: ./src/HealthStack.Order.Api
       dockerfile: Dockerfile
-    ports:
-      - "5300:8080"
+    # ports:
+    #   - "5300:8080"
     environment:
       ConnectionStrings__Default: "Server=orderdb,1433;Database=OrderDB;User Id=sa;Password=Walid@1235;TrustServerCertificate=True;"
       RabbitMQ__HostName: rabbitmq
@@ -88,8 +102,8 @@ services:
     environment:
       SA_PASSWORD: "Walid@1235"
       ACCEPT_EULA: "Y"
-    ports:
-      - "1435:1433"
+    # ports:
+    #   - "1435:1433"
     volumes:
       - orderdb-data:/var/opt/mssql
     networks:
